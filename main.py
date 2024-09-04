@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, WebSocket
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -35,6 +35,7 @@ async def websocket_endpoint(websocket: WebSocket, username: str):
             # Отправляем сообщение всем подключенным клиентам
             for client in connected_clients:
                 await client["websocket"].send_text(message)
+            message_queue.pop(0)
     except WebSocketDisconnect:
         # Удаляем клиента из списка при отключении
         connected_clients.remove({"websocket": websocket, "username": username})

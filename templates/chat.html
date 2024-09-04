@@ -10,16 +10,26 @@
         <input type="text" id="username" required>
         <button type="button" onclick="connectToChat()">Подключиться</button>
     </form>
-    <div id="chatbox" style="border: 1px solid #ccc; width: 300px; height: 200px; overflow-y: scroll;"></div>
+    <div id="chatbox" class="chatbox"></div>
     <form>
-        <input type="text" id="message" required>
+        <input type="text" id="msgbox" onkeypress="sendMessageByEnter(event)" required>
         <button type="button" onclick="sendMessage()">Отправить</button>
     </form>
+
+    <style>
+        .chatbox {
+            height: 200px;
+            width: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+        }
+    </style>
 
     <script>
         let socket;
         let username;
         const chatbox = document.getElementById("chatbox");
+        const msgbox = document.getElementById("msgbox");
 
         function connectToChat() {
             username = document.getElementById("username").value;
@@ -30,16 +40,26 @@
                     chatbox.scrollTop = chatbox.scrollHeight;
                 };
                 document.getElementById("userform").style.display = "none";
+                msgbox.focus();
             }
         }
 
         function sendMessage() {
-            const message = document.getElementById("message").value;
+            const message = msgbox.value;
             if (socket && message) {
                 socket.send(message);
-                document.getElementById("message").value = "";
+                msgbox.value = "";
+                msgbox.focus();
             }
         }
+
+        function sendMessageByEnter (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
     </script>
 </body>
 </html>
